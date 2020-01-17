@@ -63,7 +63,6 @@ public class Loom : MonoBehaviour
 		public float time;
 		public Action action;
 	}
-	private List<DelayedQueueItem> _delayed = new  List<DelayedQueueItem>();
 	
 	/// <summary>
 	/// Queues an action on the main thread
@@ -73,32 +72,9 @@ public class Loom : MonoBehaviour
 	/// </param>
 	public static void QueueOnMainThread(Action action)
 	{
-		QueueOnMainThread( action, 0f);
-	}
-	/// <summary>
-	/// Queues an action on the main thread after a delay
-	/// </summary>
-	/// <param name='action'>
-	/// The action to run
-	/// </param>
-	/// <param name='time'>
-	/// The amount of time to delay
-	/// </param>
-	public static void QueueOnMainThread(Action action, float time)
-	{
-		if(time != 0)
+		lock (Current._actions)
 		{
-			lock(Current._delayed)
-			{
-				Current._delayed.Add(new DelayedQueueItem { time = Time.time + time, action = action});
-			}
-		}
-		else
-		{
-			lock (Current._actions)
-			{
-				Current._actions.Add(action);
-			}
+			Current._actions.Add(action);
 		}
 	}
 	
@@ -138,14 +114,6 @@ public class Loom : MonoBehaviour
 			foreach(var a in actions)
 			{
 				a();
-			}
-		}
-		lock(_delayed)
-		{
-			foreach(var delayed in _delayed.Where(d=>d.time <= Time.time).ToList())
-			{
-				_delayed.Remove(delayed);
-				delayed.action();
 			}
 		}
 	}
