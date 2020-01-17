@@ -12,7 +12,7 @@ using System.Linq;
 public class Loom : MonoBehaviour
 {
 	private static Loom _current;
-	private int _count;
+
 	/// <summary>
 	/// Return the current instance
 	/// </summary>
@@ -58,11 +58,6 @@ public class Loom : MonoBehaviour
 	}
 	
 	private List<Action> _actions = new List<Action>();
-	public class DelayedQueueItem
-	{
-		public float time;
-		public Action action;
-	}
 	
 	/// <summary>
 	/// Queues an action on the main thread
@@ -103,18 +98,33 @@ public class Loom : MonoBehaviour
 	
 	}
 	
+	List<Action> toBeRun = new List<Action>();
+	
 	// Update is called once per frame
 	void Update()
 	{
-		var actions = new List<Action>();
 		lock (_actions)
 		{
-			actions.AddRange(_actions);
-			_actions.Clear();
-			foreach(var a in actions)
+			if (0 == _actions.Count)
 			{
+				return;
+			}
+			
+			toBeRun.AddRange(_actions);
+			_actions.Clear();
+		}
+		
+		foreach(var a in toBeRun)
+		{
+			try {
 				a();
 			}
+			catch (Exception e)
+			{
+				Debug.LogError("Queued Exception: " + e.ToString());
+			}
 		}
+		
+		toBeRun.Clear();
 	}
 }

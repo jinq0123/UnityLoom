@@ -44,3 +44,11 @@ You access Loom using Loom.Current - it deals with creating an invisible game ob
 
 * https://www.iteye.com/blog/dsqiu-2028503
 
+## Modification to the original version
+* Don't limit thread number
+* Initialize on access
+* Check thread ID in Initialize()
+* Don't destroy on load
+* Don't check Application.isPlaying
+* Don't try-catch in RunAction()
+* Delete `QueueOnMainThread(Action action, float time)` because get_time can only be called from the main thread.
