@@ -8,11 +8,11 @@ Our class is called Loom.  Loom lets you easily run code on another thread and h
 There are only two functions to worry about:
 
 * RunAsync(Action) which runs a set of statements on another thread
-* QueueOnMainThread(Action, [optional] float time) - which runs a set of statements on the main thread (with an optional delay).
+* QueueOnMainThread(Action) - which runs a set of statements on the main thread.
 
 You access Loom using Loom.Current - it deals with creating an invisible game object to interact with the games main thread.
 
-## Usage
+## Usage example
 ```
     //Scale a mesh on a second thread  
     void ScaleMesh(Mesh mesh, float scale)  
