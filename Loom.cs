@@ -81,6 +81,7 @@ public class Loom : MonoBehaviour
 	/// </param>
 	public static void RunAsync(Action action)
 	{
+		Initialize();
 		var t = new Thread(RunAction);
 		t.Priority = System.Threading.ThreadPriority.Normal;
 		t.Start(action);
